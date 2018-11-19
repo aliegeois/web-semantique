@@ -1,4 +1,4 @@
-package websemantique;
+package semantic;
 
 import java.io.InputStream;
 
@@ -12,7 +12,7 @@ import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.util.FileManager;
 
-public class Etape2 {
+public class Main {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
