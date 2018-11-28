@@ -14,8 +14,6 @@ import org.apache.jena.util.FileManager;
 
 public class Main {
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
 		String inputFileName = "animelist.ttl";
 		
 		// create an empty model
@@ -23,26 +21,25 @@ public class Main {
 
 		// use the FileManager to find the input file
 		InputStream in = FileManager.get().open( inputFileName );
-		if (in == null) {
-		    throw new IllegalArgumentException(
-		                                 "File: " + inputFileName + " not found");
-		}
+		if (in == null)
+		    throw new IllegalArgumentException("File: " + inputFileName + " not found");
 
-		// read the RDF/XML file
+		// read the RDF/TTL file
 		model.read(in, null, "Turtle");
 
 		// write it to standard out
 		//model.write(System.out);
 		
 		String queryString =
-				"SELECT ?titre " +
-		    	"WHERE { ?anime <http://dbpedia.org/ontology#numberOfEpisodes> ?nbEpisodes. ?anime <http://schema.org/name> ?titre}" +
-		    	"LIMIT 100";
+			"SELECT ?titre " +
+		    "WHERE { ?anime <http://dbpedia.org/ontology#numberOfEpisodes> ?nbEpisodes. " +
+			"?anime <http://schema.org/name> ?titre} " +
+		    "LIMIT 100";
 
-		    	Query query = QueryFactory.create(queryString) ;
-		    	try (QueryExecution qexec = QueryExecutionFactory.create(query, model)) {
-		    		ResultSet results = qexec.execSelect() ;
-		    		ResultSetFormatter.out(System.out, results, query);
+		Query query = QueryFactory.create(queryString) ;
+		try (QueryExecution qexec = QueryExecutionFactory.create(query, model)) {
+			ResultSet results = qexec.execSelect() ;
+			ResultSetFormatter.out(System.out, results, query);
 		}
 	}
 }
