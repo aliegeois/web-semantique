@@ -14,7 +14,7 @@ import org.apache.jena.util.FileManager;
 
 public class Main {
 	public static void main(String[] args) {
-		String inputFileName = "animelist.ttl";
+		String inputFileName = "animes.ttl";
 		
 		// create an empty model
 		Model model = ModelFactory.createDefaultModel();
@@ -31,9 +31,15 @@ public class Main {
 		//model.write(System.out);
 		
 		String queryString =
+			"PREFIX schema: <http://schema.org/>" +
+			"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>" +
 			"SELECT ?titre " +
-		    "WHERE { ?anime <http://dbpedia.org/ontology#numberOfEpisodes> ?nbEpisodes. " +
-			"?anime <http://schema.org/name> ?titre} " +
+		    "WHERE {" +
+				"?anime schema:genre ?genre." +
+				"?anime schema:name ?titre." +
+				"FILTER (?genre = \"Vampire\")." +
+				"FILTER (lang(?titre) = 'jp')" +
+			"}" +
 		    "LIMIT 100";
 
 		Query query = QueryFactory.create(queryString) ;
