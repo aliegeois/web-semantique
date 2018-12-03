@@ -26,23 +26,21 @@ public class Main {
 
 		// read the RDF/TTL file
 		model.read(in, null, "Turtle");
-
-		// write it to standard out
-		//model.write(System.out);
 		
-		String queryString =
-			"PREFIX schema: <http://schema.org/>" +
-			"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>" +
-			"SELECT ?titre " +
-		    "WHERE {" +
-				"?anime schema:genre ?genre." +
-				"?anime schema:name ?titre." +
-				"FILTER (?genre = \"Vampire\")." +
-				"FILTER (lang(?titre) = 'jp')" +
-			"}" +
-		    "LIMIT 100";
+		String top10Animes =
+			"PREFIX schema: <http://schema.org/>\n" +
+			//"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
+			"SELECT ?titre ?score\n" +
+		    "WHERE {\n" +
+				"?anime schema:name ?titre.\n" +
+				"?anime schema:aggregateRating ?rating.\n" +
+				"?rating schema:ratingValue ?score.\n" +
+				"FILTER (lang(?titre) = 'en')\n" +
+			"}\n" +
+			"ORDER BY DESC(?score)\n" +
+			"LIMIT 10";
 
-		Query query = QueryFactory.create(queryString) ;
+		Query query = QueryFactory.create(top10Animes) ;
 		try (QueryExecution qexec = QueryExecutionFactory.create(query, model)) {
 			ResultSet results = qexec.execSelect() ;
 			ResultSetFormatter.out(System.out, results, query);
