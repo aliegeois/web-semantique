@@ -4,5 +4,11 @@
 	"dependencies": {
 		"papaparse": "^4.6.1"
 	},
-	"homepage": "https://github.com/aliegeois/web-semantique"
+	"homepage": "https://github.com/aliegeois/web-semantique",
+	"license": "MIT",
+	"author": {
+		"name": "Arthur Liégeois",
+		"email": "arthur.liegeois@outlook.fr",
+		"url": "https://github.com/aliegeois"
+	}
 }

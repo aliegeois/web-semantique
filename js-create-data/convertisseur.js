@@ -1,42 +1,27 @@
 const fs = require('fs'),
 	  papaparse = require('papaparse');
 
-let parse_merdique = str => {
-	if(!str)
-		return {from: '', to: ''};
-	let rtn = {},
-	    [from, to] = str.slice(1, -1).split(','),
-	    el1 = from.split(':')[1].trim(),
-		el2 = to.split(':')[1].trim();
-	
-	rtn.from = el1 == 'None' ? '' : el1.slice(1, -1);
-	rtn.to = el2 == 'None' ? '' : el2.slice(1, -1);
-
-	return rtn;
-}
-
 onload = () => {
 	let data = fs.readFileSync('file.csv').toString();
-	
+
 	let animes_raw = papaparse.parse(data, {
 		delimiter: ','
 	}).data;
-	
+
 	let prefixes = {
 		'schema': 'http://schema.org/',
 		'xsd': 'http://www.w3.org/2001/XMLSchema#',
-		'void': 'http://rdfs.org/ns/void#'
+		'void': 'http://rdfs.org/ns/void#',
+		' ': '#'
 	};
 	let labels = [],
-	    animes = [];
+		animes = [];
 
 	for(let i = 0; i < animes_raw[0].length; i++)
 		labels[i] = animes_raw[0][i].toLowerCase();
 
 	for(let i = 1; i < animes_raw.length; i++) {
 		let anime = {};
-		/*if(animes_raw[i][0].length < 1)
-			console.log(`id: ${i}, value: ${animes_raw[i]}`);*/
 		for(let j = 0; j < labels.length; j++) {
 			if(animes_raw[i][j] == undefined)
 				animes_raw[i][j] = '';
@@ -48,7 +33,19 @@ onload = () => {
 					anime[labels[j]] = animes_raw[i][j].split(',');
 					break;
 				case 'aired':
-					anime[labels[j]] = parse_merdique(animes_raw[i][j]);
+					anime[labels[j]] = (str => {
+						if(!str)
+							return {from: '', to: ''};
+						let rtn = {},
+							[from, to] = str.slice(1, -1).split(','),
+							el1 = from.split(':')[1].trim(),
+							el2 = to.split(':')[1].trim();
+						
+						rtn.from = el1 == 'None' ? '' : el1.slice(1, -1);
+						rtn.to = el2 == 'None' ? '' : el2.slice(1, -1);
+					
+						return rtn;
+					})(animes_raw[i][j])
 					break;
 				default:
 					anime[labels[j]] = animes_raw[i][j];
@@ -59,7 +56,7 @@ onload = () => {
 
 	let ttl_document = '';
 	for(let [short, long] of Object.entries(prefixes))
-		ttl_document += `@prefix ${short}: <${long}>\n`;
+		ttl_document += `@prefix ${short}: <${long}> .\n`;
 	prefixes.anime = 'https://myanimelist.net/anime/';
 	ttl_document += '\n\n';
 
@@ -100,12 +97,14 @@ onload = () => {
 
 		ttl_document += ttl_element + '\n\n';
 	}
-	
+
 	fs.writeFile('D:/Arthur/Documents/nwjs/csv to rdf/app/animes.ttl', ttl_document, err => {
 		if(err)
 			throw err;
 		console.log('done');
 	});
-}
 
-nw.Window.get().showDevTools();
+	let input = document.createElement('input');
+	input.setAttribute('type', 'file');
+	input.setAttribute('nwsaveas', '');
+}
