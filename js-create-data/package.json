@@ -1,0 +1,8 @@
+{
+	"name": "csv-to-rdf",
+	"main": "index.html",
+	"dependencies": {
+		"papaparse": "^4.6.1"
+	},
+	"homepage": "https://github.com/aliegeois/web-semantique"
+}
